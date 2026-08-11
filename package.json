@@ -1,0 +1,24 @@
+{
+  "name": "chatum",
+  "version": "1.0.0",
+  "description": "Production-grade Real-Time Chat Application with Express, Socket.io, SQLite, and React",
+  "scripts": {
+    "dev": "node -e \"const { spawn } = require('child_process'); spawn('npm', ['run', 'dev', '--prefix', 'backend'], { stdio: 'inherit', shell: true }); spawn('npm', ['run', 'dev', '--prefix', 'frontend'], { stdio: 'inherit', shell: true });\"",
+    "start:backend": "npm start --prefix backend",
+    "start:frontend": "npm run dev --prefix frontend",
+    "test:backend": "npm test --prefix backend",
+    "seed:db": "npm run seed --prefix backend",
+    "clean:db": "npm run clean --prefix backend",
+    "build:frontend": "npm run build --prefix frontend"
+  },
+  "keywords": [
+    "react",
+    "socket.io",
+    "nodejs",
+    "express",
+    "sqlite",
+    "realtime-chat"
+  ],
+  "author": "",
+  "license": "MIT"
+}
