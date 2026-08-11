@@ -19,7 +19,7 @@ export const UserModel = {
 
   async updateStatus(username, status) {
     await run(
-      'UPDATE users SET status = ?, lastSeenAt = CURRENT_TIMESTAMP WHERE LOWER(username) = LOWER(?)',
+      "UPDATE users SET status = ?, lastSeenAt = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE LOWER(username) = LOWER(?)",
       [status, username.trim()]
     );
     return await this.getByUsername(username);
@@ -42,7 +42,7 @@ export const UserModel = {
 
     // Update users table
     await run(
-      'UPDATE users SET username = ?, avatar = ?, lastSeenAt = CURRENT_TIMESTAMP WHERE id = ?',
+      "UPDATE users SET username = ?, avatar = ?, lastSeenAt = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?",
       [targetUsername, targetAvatar, user.id]
     );
 
@@ -62,7 +62,7 @@ export const UserModel = {
     if (existing) {
       const newAvatar = avatar || existing.avatar;
       await run(
-        'UPDATE users SET avatar = ?, status = ?, lastSeenAt = CURRENT_TIMESTAMP WHERE id = ?',
+        "UPDATE users SET avatar = ?, status = ?, lastSeenAt = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?",
         [newAvatar, status, existing.id]
       );
       return await this.getById(existing.id);
@@ -70,7 +70,7 @@ export const UserModel = {
       const id = `usr_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
       const userAvatar = avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${trimmedUsername}`;
       await run(
-        'INSERT INTO users (id, username, avatar, status, lastSeenAt, createdAt) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
+        "INSERT INTO users (id, username, avatar, status, lastSeenAt, createdAt) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%SZ', 'now'), strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
         [id, trimmedUsername, userAvatar, status]
       );
       return await this.getById(id);

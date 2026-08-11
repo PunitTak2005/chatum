@@ -134,17 +134,20 @@ async function seedAll() {
   console.log('✅ Channels initialized:', ROOMS.map(r => `#${r.name}`));
 
   // 2. Seed Users
-  for (const u of USERS) {
+  for (let idx = 0; idx < USERS.length; idx++) {
+    const u = USERS[idx];
+    const offsetMinutes = (idx + 1) * 12; // stagger offline timestamps
+    const lastSeenTime = new Date(Date.now() - offsetMinutes * 60 * 1000).toISOString();
     const existing = await query('SELECT id FROM users WHERE LOWER(username) = LOWER(?)', [u.username]);
     if (!existing || existing.length === 0) {
       await run(
-        'INSERT INTO users (id, username, avatar, status, lastSeenAt, createdAt) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
-        [`usr_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, u.username, u.avatar, u.status]
+        'INSERT INTO users (id, username, avatar, status, lastSeenAt, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
+        [`usr_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, u.username, u.avatar, u.status, lastSeenTime, lastSeenTime]
       );
     } else {
       await run(
-        'UPDATE users SET avatar = ?, status = ?, lastSeenAt = CURRENT_TIMESTAMP WHERE LOWER(username) = LOWER(?)',
-        [u.avatar, u.status, u.username]
+        'UPDATE users SET avatar = ?, status = ?, lastSeenAt = ? WHERE LOWER(username) = LOWER(?)',
+        [u.avatar, u.status, lastSeenTime, u.username]
       );
     }
   }

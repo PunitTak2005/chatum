@@ -9,18 +9,41 @@ export const UserPresenceList = ({ isOpen }) => {
 
   if (!isOpen) return null;
 
+  // Robust ISO / SQLite UTC parser
+  const parseDbDate = (dateStr) => {
+    if (!dateStr) return null;
+    if (typeof dateStr === 'string') {
+      // If SQLite format 'YYYY-MM-DD HH:MM:SS' without timezone, treat as UTC
+      if (!dateStr.includes('Z') && !dateStr.includes('+')) {
+        return new Date(dateStr.replace(' ', 'T') + 'Z');
+      }
+    }
+    return new Date(dateStr);
+  };
+
+  // Formats exact time (e.g. "Last seen at 5:45 PM", "Yesterday at 5:45 PM", "Aug 11 at 5:45 PM")
   const formatLastSeen = (isoString) => {
     if (!isoString) return 'Offline';
     try {
-      const date = new Date(isoString);
-      const diffMs = Date.now() - date.getTime();
-      const diffMins = Math.floor(diffMs / (1000 * 60));
-      const diffHours = Math.floor(diffMins / 60);
+      const date = parseDbDate(isoString);
+      if (!date || isNaN(date.getTime())) return 'Offline';
 
-      if (diffMins < 1) return 'Just now';
-      if (diffMins < 60) return `${diffMins}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      const now = new Date();
+      const isToday = date.toDateString() === now.toDateString();
+      const timeStr = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+
+      if (isToday) {
+        return `Last seen at ${timeStr}`;
+      }
+
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      if (date.toDateString() === yesterday.toDateString()) {
+        return `Yesterday at ${timeStr}`;
+      }
+
+      const dateStr = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      return `${dateStr} at ${timeStr}`;
     } catch {
       return 'Offline';
     }
@@ -93,13 +116,13 @@ export const UserPresenceList = ({ isOpen }) => {
             </div>
 
             {offlineUsers.map((user, idx) => (
-              <div key={user.id || idx} className="presence-item" style={{ opacity: 0.65 }}>
+              <div key={user.id || idx} className="presence-item" style={{ opacity: 0.75 }}>
                 <div className="user-avatar-wrapper">
                   <img
                     src={user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.username}`}
                     alt={user.username}
                     className="user-avatar"
-                    style={{ width: 34, height: 34, filter: 'grayscale(0.5)' }}
+                    style={{ width: 34, height: 34, filter: 'grayscale(0.35)' }}
                   />
                   <span
                     className="status-dot"
@@ -115,8 +138,21 @@ export const UserPresenceList = ({ isOpen }) => {
                   <div className="presence-name" style={{ color: 'var(--text-muted)' }}>
                     {user.username}
                   </div>
-                  <div className="presence-room" style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'var(--text-dim)' }}>
-                    <Clock size={10} />
+                  <div
+                    className="presence-room"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      color: 'var(--text-dim)',
+                      fontSize: '0.72rem',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                    title={formatLastSeen(user.lastSeenAt)}
+                  >
+                    <Clock size={11} style={{ flexShrink: 0 }} />
                     <span>{formatLastSeen(user.lastSeenAt)}</span>
                   </div>
                 </div>
