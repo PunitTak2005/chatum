@@ -1,7 +1,7 @@
 # ⚡ Chatum - Real-Time Chat Application
-https://chatum-omega.vercel.app/
+[https://chatum-omega.vercel.app](https://chatum-omega.vercel.app/)
 
-A production-grade, high-performance **Real-Time Chat Application** built with **Node.js, Express, Socket.io, SQLite persistence**, and a **modern glassmorphic React (Vite) frontend**.
+A production-grade, high-performance **Real-Time Chat Application** engineered with **Node.js, Express, Socket.io, SQLite persistence**, and a **modern glassmorphic React (Vite) frontend**. Designed for seamless collaboration, lightning-fast message delivery, and an immersive user experience.
 
 ---
 
