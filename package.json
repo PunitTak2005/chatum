@@ -22,5 +22,8 @@
     "realtime-chat"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "expo": "~51.0.0"
+  }
 }
