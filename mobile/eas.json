@@ -5,12 +5,18 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EAS_BUILD_SKIP_LOCKFILE_CHECK": "1"
+      }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EAS_BUILD_SKIP_LOCKFILE_CHECK": "1"
       }
     },
     "production": {
