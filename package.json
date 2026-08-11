@@ -9,7 +9,9 @@
     "test:backend": "npm test --prefix backend",
     "seed:db": "npm run seed --prefix backend",
     "clean:db": "npm run clean --prefix backend",
-    "build:frontend": "npm run build --prefix frontend"
+    "build:frontend": "npm run build --prefix frontend",
+    "start:mobile": "npm start --prefix mobile",
+    "build:mobile:apk": "npm run build:apk --prefix mobile"
   },
   "keywords": [
     "react",
